@@ -1,9 +1,8 @@
 // src/pages/profile.tsx
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
-import Image from 'next/image'
 import { Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -33,33 +32,13 @@ export default function ProfilePage() {
 
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!user) {
-      router.push('/')
-      return
-    }
-
-    setName(user.user_metadata?.name || '')
-    fetchProgress()
-    fetchResults()
-
-    // Get dark mode from localStorage
-    const savedMode = localStorage.getItem('darkMode')
-    if (savedMode) {
-      setDarkMode(savedMode === 'true')
-    }
-  }, [user])
-
-  useEffect(() => {
-    localStorage.setItem('darkMode', darkMode.toString())
-  }, [darkMode])
-
-  const fetchProgress = async () => {
+  const fetchProgress = useCallback(async () => {
+    if (!user) return
     const { data: topics } = await supabase.from('study-notes').select('id')
     const { data: progress } = await supabase
       .from('study_progress')
       .select('completed_ids')
-      .eq('user_id', user!.id)
+      .eq('user_id', user.id)
       .single()
 
     if (topics && progress) {
@@ -68,17 +47,40 @@ export default function ProfilePage() {
       const percentage = total > 0 ? Math.floor((completed / total) * 100) : 0
       setProgress(percentage)
     }
-  }
+  }, [user])
 
-  const fetchResults = async () => {
+  const fetchResults = useCallback(async () => {
+    if (!user) return
     const { data } = await supabase
       .from('results')
       .select('id, score, created_at')
-      .eq('user_id', user!.id)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (data) setResults(data)
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/')
+      return
+    }
+
+    setName(user.user_metadata?.name || '')
+
+    fetchProgress()
+    fetchResults()
+
+    // Get dark mode from localStorage
+    const savedMode = localStorage.getItem('darkMode')
+    if (savedMode) {
+      setDarkMode(savedMode === 'true')
+    }
+  }, [user, router, fetchProgress, fetchResults])
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode.toString())
+  }, [darkMode])
 
   const handleNameSave = async () => {
     await supabase.auth.updateUser({

@@ -1,4 +1,5 @@
-// src/pages/dashboard.tsx
+'use client'
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthContext'
@@ -37,7 +38,7 @@ export default function DashboardPage() {
     }
 
     checkProgress()
-  }, [user])
+  },  [router, user]) 
 
   if (!user) return null
 

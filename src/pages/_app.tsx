@@ -7,10 +7,9 @@ import { AuthProvider, useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/router'
 import LoggedInNavbar from '@/components/Navbar'
 import PublicNavbar from '@/components/PublicNavbar'
-
 import { ComponentType } from 'react'
 
-function AppContent({ Component, pageProps }: { Component: ComponentType<any>, pageProps: any }) {
+function AppContent({ Component, pageProps }: { Component: AppProps['Component']; pageProps: AppProps['pageProps'] }) {
   const router = useRouter()
   const { user, loading } = useAuth()
 

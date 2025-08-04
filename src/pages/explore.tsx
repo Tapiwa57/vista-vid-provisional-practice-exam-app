@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,6 +13,25 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
+
+type Blog = {
+  id: string
+  title: string
+  content: string
+  created_at: string
+  // add other fields you use
+}
+
+type Testimonial = {
+  id: string
+  message: string
+  rating: number
+  profiles?: {
+    name?: string
+  }
+  created_at: string
+  // add other fields you use
+}
 
 export default function ExplorePage() {
   const [showSignup, setShowSignup] = useState(false)
@@ -38,8 +57,8 @@ export default function ExplorePage() {
   })
 
   const [stats, setStats] = useState({ users: 0, questions: 0, blogs: 0, completed: 0 })
-  const [blogs, setBlogs] = useState<any[]>([])
-  const [testimonials, setTestimonials] = useState<any[]>([])
+  const [blogs, setBlogs] = useState<Blog[]>([])
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
 
   useEffect(() => {
     const startAutoplay = () => {
@@ -58,16 +77,20 @@ export default function ExplorePage() {
 
     const container = sliderContainerRef.current
     if (container) {
-      container.addEventListener("mouseenter", () => isHovered.current = true)
-      container.addEventListener("mouseleave", () => isHovered.current = false)
+      const onMouseEnter = () => { isHovered.current = true }
+      const onMouseLeave = () => { isHovered.current = false }
+      container.addEventListener("mouseenter", onMouseEnter)
+      container.addEventListener("mouseleave", onMouseLeave)
+
+      return () => {
+        stopAutoplay()
+        container.removeEventListener("mouseenter", onMouseEnter)
+        container.removeEventListener("mouseleave", onMouseLeave)
+      }
     }
 
     return () => {
       stopAutoplay()
-      if (container) {
-        container.removeEventListener("mouseenter", () => {})
-        container.removeEventListener("mouseleave", () => {})
-      }
     }
   }, [instanceRef])
 
@@ -136,7 +159,7 @@ export default function ExplorePage() {
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-[#1B264F] leading-tight mb-4">
             Welcome to <br className="md:hidden" />
-            <span className="text-yellow-500">Vehicle Inspector Skill & Test Application (VISTA)</span>
+            <span className="text-yellow-500">Vehicle Inspector Skill &amp; Test Application (VISTA)</span>
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mt-4">
             Your complete preparation companion for the VID provisional oral exams. Learn, practice, and track your progress — all in one place.
@@ -158,7 +181,7 @@ export default function ExplorePage() {
           {/* Text Content */}
           <div className="w-full md:w-1/2 text-[#1B264F]">
             <p className="text-base md:text-lg mb-6 leading-relaxed">
-              VISTA is a smart, interactive learning platform designed to help aspiring drivers confidently prepare for their Vehicle Inspection Department (VID) oral exams. 
+              VISTA is a smart, interactive learning platform designed to help aspiring drivers confidently prepare for their Vehicle Inspection Department (VID) oral exams.{" "}
               The app offers a comprehensive practice experience with multiple-choice questions, realistic simulations, and detailed performance feedback.
             </p>
 
@@ -207,7 +230,7 @@ export default function ExplorePage() {
         <div ref={testimonialsSliderRef} className="keen-slider">
           {testimonials.map((item, index) => (
             <div className="keen-slider__slide bg-white text-[#1B264F] p-6 rounded-xl shadow " key={index}>
-              <p className="italic">"{item.message}"</p>
+              <p className="italic">"&quot;{item.message}&quot;"</p>
               <div className="flex gap-1 mt-2">
                 {[1, 2, 3, 4, 5].map(star => (
                   <Star key={star} size={18} fill={star <= item.rating ? '#facc15' : 'none'} stroke="#facc15" />
@@ -222,7 +245,7 @@ export default function ExplorePage() {
       {/* Tutorials Section */}
       <section className="py-16 px-4 sm:px-6 md:px-20 bg-[#F5F3F5] text-[#1B264F]">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10">
-          Driving Video Tutorials & Tips
+          Driving Video Tutorials &amp; Tips
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {[
@@ -301,7 +324,7 @@ export default function ExplorePage() {
             <p className="text-sm text-gray-400">
               &copy; {new Date().getFullYear()} <span className="font-bold text-white">VISTA</span>, Zimbabwe. All rights reserved.
               <br />
-              <span className="text-xs mt-1 block"><a href='www.linkedin.com/in/tapiwa-ndemera-373704348'>Designed by Tapiwa Ndemera</a></span>
+              <span className="text-xs mt-1 block"><a href="https://www.linkedin.com/in/tapiwa-ndemera-373704348">Designed by Tapiwa Ndemera</a></span>
             </p>
           </div>
         </div>

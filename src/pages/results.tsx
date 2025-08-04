@@ -38,6 +38,16 @@ interface ResultData {
   questions_data?: Record<number, Question>;
 }
 
+interface Feedback {
+  id: number;
+  user_id: string;
+  message: string;
+  rating: number;
+  locked: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export default function ResultsPage() {
   const router = useRouter();
   const { id } = router.query;
@@ -50,7 +60,7 @@ export default function ResultsPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [existingFeedback, setExistingFeedback] = useState<any>(null);
+  const [existingFeedback, setExistingFeedback] = useState<Feedback | null>(null);
   const [attemptCount, setAttemptCount] = useState(0);
   const [feedbackLocked, setFeedbackLocked] = useState(false);
 

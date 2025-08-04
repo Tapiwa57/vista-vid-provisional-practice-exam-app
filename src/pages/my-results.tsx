@@ -38,8 +38,7 @@ export default function MyResultsPage() {
   if (!user) return <p className="text-center p-6">Please login to view results</p>
   if (!results.length) return <p className="text-center p-6">No results found</p>
 
-  const passed = results.filter(r => r.score >= 90).length
-  const failed = results.length - passed
+
 
   return (
     <div className="min-h-screen bg-white p-6 text-gray-900">

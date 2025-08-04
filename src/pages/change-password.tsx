@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/context/AuthContext'
+/*import { useAuth } from '@/context/AuthContext'*/
 
 export default function ChangePasswordPage() {
-  const { user } = useAuth()
+  /*const { user } = useAuth()*/
   const router = useRouter()
 
   const [newPassword, setNewPassword] = useState('')

@@ -18,7 +18,7 @@ export default function IndexPage() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
-  const { user, loading } = useAuth()
+  /*const { user, loading } = useAuth()*/
 
   const handleLogin = async () => {
     setError(null)

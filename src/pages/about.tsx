@@ -5,30 +5,13 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-import { useKeenSlider } from 'keen-slider/react'
-import 'keen-slider/keen-slider.min.css'
 import { supabase } from '@/lib/supabase'
 import { motion } from 'framer-motion'
 import SignUpModal from '../components/SignUpModal'
 import Link from 'next/link'
 
-interface Testimonial {
-  id: number
-  message: string
-  rating: number
-  user_id: string
-  profiles?: { name: string }
-}
-
 export default function AboutPage() {
   const [showSignup, setShowSignup] = useState(false)
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
-  const [sliderRef] = useKeenSlider<HTMLDivElement>({
-    loop: true,
-    mode: 'snap',
-    slides: { perView: 1, spacing: 10 },
-  })
-
   const [years, setYears] = useState<number>(0)
 
   useEffect(() => {
@@ -41,33 +24,10 @@ export default function AboutPage() {
         .from('site_settings')
         .select('experience_years')
         .single()
-
       if (!error && data) setYears(data.experience_years || 0)
     }
 
     fetchExperienceYears()
-  }, [])
-
-  useEffect(() => {
-    const fetchTestimonials = async () => {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('id, message, rating, user_id, profiles(name)')
-        .order('id', { ascending: false })
-        .limit(10)
-
-      if (error) {
-        console.error('❌ Failed to fetch testimonials:', error)
-      } else if (data) {
-        const flattened = data.map(item => ({
-          ...item,
-          profiles: item.profiles?.[0] || null,
-        }))
-        setTestimonials(flattened)
-      }
-    }
-
-    fetchTestimonials()
   }, [])
 
   return (
@@ -83,7 +43,7 @@ export default function AboutPage() {
           <Image src="/image/Logo.png" alt="VISTA Logo" width={100} height={100} className="mx-auto mb-6" />
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6">About VISTA</h1>
           <p className="text-base sm:text-lg text-white">
-            Zimbabwes #1 platform for preparing for the VID Provisional Exam with interactive mock tests,
+            Zimbabwe&apos;s #1 platform for preparing for the VID Provisional Exam with interactive mock tests,
             study notes, and instant feedback.
           </p>
         </div>
@@ -125,7 +85,7 @@ export default function AboutPage() {
             feedback, and a library of study materials, we aim to make your success inevitable.
           </p>
           <p className="text-gray-600 mb-6">
-            Join thousands of learners who’ve trusted VISTA to gain confidence before the big day!
+            Join thousands of learners who&apos;ve trusted VISTA to gain confidence before the big day!
           </p>
           <button
             className="bg-[#302B15] hover:bg-[#1B264F] transition text-white px-6 py-3 rounded-lg font-medium"
@@ -189,7 +149,7 @@ export default function AboutPage() {
         <div className="flex flex-wrap justify-center gap-10 max-w-5xl mx-auto">
           {['Chipo, Harare', 'Tawanda, Bulawayo', 'Rudo, Mutare'].map((name, i) => (
             <div key={i} className="bg-white text-[#1B264F] p-6 rounded-xl shadow w-full sm:w-[300px]" data-aos="fade-in">
-              <p className="italic">"This platform helped me pass on my first try!"</p>
+              <p className="italic">&quot;This platform helped me pass on my first try!&quot;</p>
               <p className="mt-4 font-bold">{name}</p>
             </div>
           ))}
@@ -197,15 +157,17 @@ export default function AboutPage() {
       </section>
 
       <div className="bg-white text-center py-10">
-        <a href="/" className="bg-[#1B264F] text-white px-8 py-4 rounded font-semibold hover:bg-[#302B27] transition">
+        <Link href="/" className="bg-[#1B264F] text-white px-8 py-4 rounded font-semibold hover:bg-[#302B27] transition inline-block">
           🚀 Explore VISTA Now
-        </a>
+        </Link>
       </div>
-      {/* Footer */}
+
       <div className="bg-[#302B27] text-white px-4 sm:px-6 py-10">
         <div className="max-w-6xl mx-auto flex flex-col items-center space-y-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 w-full text-center md:text-left">
-            <Link href='/explore'><Image src="/image/Logo.png" alt="Logo" width={120} height={0} /></Link>
+            <Link href='/explore'>
+              <Image src="/image/Logo.png" alt="Logo" width={120} height={0} />
+            </Link>
             <div>
               <Link href='/about'>
                 <h2 className="text-xl font-bold mb-4">About Us</h2>
@@ -232,20 +194,30 @@ export default function AboutPage() {
               <h2 className="text-xl font-bold mb-4">Course</h2>
               <p className="text-gray-300 mb-4">VID Provisional</p>
               <div className="flex items-center justify-center md:justify-start gap-3">
-                <span className="font-semibold"><button
+                <button
                   onClick={() => setShowSignup(true)}
-                 className='bg-white hover:bg-[#1B264F] hover:text-white text-[#1B264F] px-4 py-2 rounded'>Sign Up</button></span>
-                 <Link href='/'><button className='bg-[#1B264F] hover:bg-white hover:text-[#1B264F] text-white font-bold px-4 py-2 rounded'>Log In</button></Link>
+                  className='bg-white hover:bg-[#1B264F] hover:text-white text-[#1B264F] px-4 py-2 rounded'
+                >
+                  Sign Up
+                </button>
+                <Link href='/'>
+                  <button className='bg-[#1B264F] hover:bg-white hover:text-[#1B264F] text-white font-bold px-4 py-2 rounded'>
+                    Log In
+                  </button>
+                </Link>
               </div>
               {showSignup && <SignUpModal onClose={() => setShowSignup(false)} />}
             </div>
-            
           </div>
           <div className="w-full border-t border-gray-600 pt-6 text-center">
             <p className="text-sm text-gray-400">
               &copy; {new Date().getFullYear()} <span className="font-bold text-white">VISTA</span>, Zimbabwe. All rights reserved.
               <br />
-              <span className="text-xs mt-1 block"><a href='www.linkedin.com/in/tapiwa-ndemera-373704348'>Designed by Tapiwa Ndemera</a></span>
+              <span className="text-xs mt-1 block">
+                <a href='https://www.linkedin.com/in/tapiwa-ndemera-373704348' target='_blank' rel='noopener noreferrer'>
+                  Designed by Tapiwa Ndemera
+                </a>
+              </span>
             </p>
           </div>
         </div>

@@ -60,7 +60,7 @@ export default function SignUpModal({ onClose }: SignUpModalProps) {
           &times;
         </button>
         <Link href='/explore'><Image  className=" ml-39" src='/image/Logo.png' alt='Logo' width={80} height={80} /></Link>
-        <h2 className="text-2xl font-bold mb-4 text-center">Create an Account</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center"><a>Create an Account</a></h2>
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
         {message && <p className="text-green-600 text-sm mb-4">{message}</p>}
         <input

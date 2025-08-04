@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
+import Image from 'next/image'
 
 export default function LoggedInNavbar() {
   const { user, signOut } = useAuth()
@@ -18,7 +19,7 @@ export default function LoggedInNavbar() {
     <nav className="bg-[#F5F3F5] w-full  text-[#1B264F] p-4 shadow flex flex-col md:flex-row md:justify-between md:items-center">
       <div className="flex justify-between items-center">
         <Link href="/explore">
-          <img
+          <Image
             src="/image/Logo.png"
             alt="Logo"
             width={60}
