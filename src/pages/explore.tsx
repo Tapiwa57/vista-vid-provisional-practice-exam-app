@@ -230,7 +230,7 @@ export default function ExplorePage() {
         <div ref={testimonialsSliderRef} className="keen-slider">
           {testimonials.map((item, index) => (
             <div className="keen-slider__slide bg-white text-[#1B264F] p-6 rounded-xl shadow " key={index}>
-              <p className="italic">"&quot;{item.message}&quot;"</p>
+              <p className="italic">&quot;{item.message}&quot;</p>
               <div className="flex gap-1 mt-2">
                 {[1, 2, 3, 4, 5].map(star => (
                   <Star key={star} size={18} fill={star <= item.rating ? '#facc15' : 'none'} stroke="#facc15" />
