@@ -1,76 +1,97 @@
-import { useState } from "react";
-import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import Image from "next/image";
+import { useState } from 'react'
+import Link from 'next/link'
+import { useAuth } from '@/context/AuthContext'
+import Image from 'next/image'
 
 export default function LoggedInNavbar() {
-  const { user, signOut } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
 
-  const name = user?.user_metadata?.name || "Driver";
+  const name = user?.user_metadata?.name || 'Driver'
   const initials = name
-    .split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  .split(' ')
+  .map((n: string) => n[0])
+  .join('')
+  .toUpperCase()
+
 
   return (
-    <nav className="bg-[#F5F3F5] w-full text-[#1B264F] p-4 shadow">
-      <div className="flex justify-between items-center">
-        {/* Logo */}
-        <Link href="/explore">
-          <Image
-            src="/image/Logo.png"
-            alt="Logo"
-            width={60}
-            height={60}
-            className="cursor-pointer"
-          />
-        </Link>
+    <nav className="bg-white shadow-md px-6 py-3 flex items-center justify-between">
+      {/* Logo / Brand */}
+      <Link href="/">
+        <span className="font-bold text-xl text-[#1B264F] cursor-pointer">MyApp</span>
+      </Link>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-2xl focus:outline-none"
-        >
-          ☰
-        </button>
-      </div>
-      <div
-      
-        className={`${
-          isOpen ? "flex" : "hidden"
-        } flex-col mt-4 space-y-2 md:mt-0 md:space-y-0 md:flex md:flex-row md:items-center md:space-x-6 font-semibold`}
-      >
-       {/* Profile / Study Notes */}
-<Link
-  href="/notes"
-  className="flex items-center gap-2 hover:underline"
->
-  <div className="bg-[#1B264F] text-white flex items-center justify-center font-bold w-8 h-8 rounded-full">
-    {initials}
-  </div>
-  <span>{name}</span>
-</Link>
-      {/* Links container */}
-        <Link href="/notes" className="hover:underline">
-          Study Notes
+      {/* Desktop Links */}
+      <div className="hidden md:flex items-center gap-6">
+        <Link href="/dashboard" className="hover:underline">
+          Dashboard
         </Link>
         <Link href="/exam" className="hover:underline">
-          Practice Exam
+          Exam
         </Link>
         <Link href="/results" className="hover:underline">
           Results
         </Link>
-        {/* Logout button */}
+
+        {/* Profile / Study Notes */}
+        <Link
+          href="/notes"
+          className="flex items-center gap-2 hover:underline"
+        >
+          <div className="bg-[#1B264F] text-white flex items-center justify-center font-bold w-8 h-8 rounded-full">
+            {initials}
+          </div>
+          <span>{name}</span>
+        </Link>
+
         <button
-          onClick={signOut}
-          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 w-full md:w-auto text-center"
+          onClick={() => signOut()}
+          className="bg-[#1B264F] text-white px-4 py-2 rounded hover:bg-[#1B299F] transition font-bold"
         >
           Logout
         </button>
       </div>
+
+      {/* Mobile Hamburger */}
+      <div className="md:hidden flex items-center">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-[#1B264F] font-bold text-2xl focus:outline-none"
+        >
+          ☰
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="absolute top-16 left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-4 md:hidden">
+          <Link href="/dashboard" className="hover:underline">
+            Dashboard
+          </Link>
+          <Link href="/exam" className="hover:underline">
+            Exam
+          </Link>
+          <Link href="/results" className="hover:underline">
+            Results
+          </Link>
+          <Link
+            href="/notes"
+            className="flex items-center gap-2 hover:underline"
+          >
+            <div className="bg-[#1B264F] text-white flex items-center justify-center font-bold w-8 h-8 rounded-full">
+              {initials}
+            </div>
+            <span>{name}</span>
+          </Link>
+          <button
+            onClick={() => signOut()}
+            className="bg-[#1B264F] text-white px-4 py-2 rounded hover:bg-[#1B299F] transition font-bold"
+          >
+            Logout
+          </button>
+        </div>
+      )}
     </nav>
-  );
+  )
 }
