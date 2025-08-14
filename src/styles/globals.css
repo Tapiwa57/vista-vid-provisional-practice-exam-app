@@ -4,19 +4,21 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #1B264F;
-  --secondary: #F5F3F5;
-  --accent: #1B299F;
+ --primary: #1B264F;       /* Main text or headings */
+  --secondary: #F5F3F5;     /* Section background */
+  --accent: #302B27;        /* Buttons and dark elements */
+  --highlight: #facc15;     /* Yellow highlight */
 }
 
 /* Dark mode based on device preference */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1B264F;
-    --foreground: #F5F3F5;
-    --primary: #F5F3F5;
-    --secondary: #1B264F;
-    --accent: #1B299F;
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --primary: #ededed;
+    --secondary: #171717;
+    --accent: #1B264F;
+    --highlight: #facc15;
   }
 }
 
