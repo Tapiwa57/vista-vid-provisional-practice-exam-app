@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -38,14 +38,20 @@ export default function ExamPage() {
       if (!user?.id) return;
 
       let excludeIds: number[] = [];
-      const { data: previousResults } = await supabase
-        .from('results')
-        .select('question_ids')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
 
-      if (previousResults) {
-        excludeIds = previousResults.flatMap(r => r.question_ids);
+      // ✅ Fixed column name: user_id_uuid
+      const { data: progressData, error: progressError } = await supabase
+        .from('study_progress')
+        .select('completed_ids')
+        .eq('user_id_uuid', user.id)
+        .maybeSingle();
+
+      if (progressError) {
+        console.warn('⚠️ Failed to fetch study progress:', progressError.message);
+      }
+
+      if (progressData?.completed_ids) {
+        excludeIds = progressData.completed_ids;
       }
 
       const { data, error } = await supabase
@@ -69,7 +75,7 @@ export default function ExamPage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer(prev => {
+      setTimer((prev) => {
         if (prev === 1) {
           clearInterval(interval);
           handleFinishExam();
@@ -88,14 +94,14 @@ export default function ExamPage() {
   const handleNext = () => {
     setImageError(false);
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
     }
   };
 
   const handlePrevious = () => {
     setImageError(false);
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
@@ -106,7 +112,7 @@ export default function ExamPage() {
     const corrects: Record<number, string> = {};
     const fullQuestionMap: Record<number, Omit<Question, 'image_path'>> = {};
 
-    questions.forEach(q => {
+    questions.forEach((q) => {
       questionIds.push(q.id);
       selected[q.id] = selectedAnswers[q.id] || '';
       corrects[q.id] = q.correct_answer;
@@ -117,7 +123,7 @@ export default function ExamPage() {
         option_b: q.option_b,
         option_c: q.option_c,
         option_d: q.option_d,
-        correct_answer: q.correct_answer
+        correct_answer: q.correct_answer,
       };
       if (selected[q.id] === q.correct_answer) correct++;
     });
@@ -130,15 +136,17 @@ export default function ExamPage() {
 
     const { data, error } = await supabase
       .from('results')
-      .insert([{
-        user_id: user?.id,
-        score: percentage,
-        question_ids: questionIds,
-        selected_answers: selected,
-        correct_answers: corrects,
-        questions_data: fullQuestionMap,
-        time_taken: timeTaken
-      }])
+      .insert([
+        {
+          user_id: user?.id,
+          score: percentage,
+          question_ids: questionIds,
+          selected_answers: selected,
+          correct_answers: corrects,
+          questions_data: fullQuestionMap,
+          time_taken: timeTaken,
+        },
+      ])
       .select()
       .single();
 
@@ -159,15 +167,15 @@ export default function ExamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 p-6">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 p-6">
       {!finished ? (
         <>
           <div className="text-center text-xl font-semibold mb-6">
-            <Image src='/image/Logo.png' alt='Logo' width={60} height={60}/>
+            <Image src="/image/Logo.png" alt="Logo" width={60} height={60} />
             Time Left: {Math.floor(timer / 60)}:{String(timer % 60).padStart(2, '0')}
           </div>
 
-          <div className="max-w-4xl mx-auto bg-gray-100 p-6 rounded-xl shadow-lg">
+          <div className="max-w-4xl mx-auto bg-gray-100 dark:bg-gray-800 p-6 rounded-xl shadow-lg">
             <h2 className="text-lg font-medium mb-4">
               Question {currentQuestionIndex + 1} of {questions.length}
             </h2>
@@ -190,21 +198,27 @@ export default function ExamPage() {
               <div className="flex-1">
                 <p className="text-lg font-semibold mb-2">{currentQuestion.question}</p>
                 <div className="space-y-2">
-                  {['A', 'B', 'C', 'D'].map(opt => {
+                  {['A', 'B', 'C', 'D'].map((opt) => {
                     const optionValue =
                       currentQuestion[`option_${opt.toLowerCase()}` as keyof Question] as string;
                     const isSelected = selectedAnswers[currentQuestion.id] === opt;
 
                     return (
-                      <div
+                      <label
                         key={opt}
-                        className={`p-3 border rounded cursor-pointer ${
-                          isSelected ? 'bg-blue-100 border-blue-400' : 'hover:bg-gray-200'
+                        className={`flex items-center gap-3 p-3 border rounded cursor-pointer ${
+                          isSelected ? 'bg-blue-100 border-blue-400 dark:bg-blue-900 dark:border-blue-400' : 'hover:bg-gray-200 dark:hover:bg-gray-700'
                         }`}
-                        onClick={() => handleAnswerSelect(opt)}
                       >
-                        <strong>{opt}.</strong> {optionValue}
-                      </div>
+                        <input
+                          type="radio"
+                          name={`question-${currentQuestion.id}`}
+                          checked={isSelected}
+                          onChange={() => handleAnswerSelect(opt)}
+                          className="w-4 h-4"
+                        />
+                        <span>{optionValue}</span>
+                      </label>
                     );
                   })}
                 </div>
@@ -215,7 +229,7 @@ export default function ExamPage() {
               <button
                 onClick={handlePrevious}
                 disabled={currentQuestionIndex === 0}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 disabled:opacity-50"
               >
                 Previous
               </button>
