@@ -22,7 +22,7 @@ export default function StudyNotesPage() {
   const [loadingUrlId, setLoadingUrlId] = useState<number | null>(null)
   const [iframeLoading, setIframeLoading] = useState(false)
 
-  // 🧠 Fetch all notes
+  // Fetch all notes
   useEffect(() => {
     const fetchNotes = async () => {
       setLoading(true)
@@ -40,7 +40,7 @@ export default function StudyNotesPage() {
     fetchNotes()
   }, [])
 
-  // ✅ Fetch or initialize user's progress
+  // Fetch or initialize user's progress
   useEffect(() => {
     const fetchProgress = async () => {
       const { data, error } = await supabase
@@ -54,7 +54,6 @@ export default function StudyNotesPage() {
       } else if (data) {
         setCompletedIds(data.completed_ids)
       } else {
-        // Initialize empty progress for first time
         await supabase.from('study_progress').insert([{ user_id: user?.id, completed_ids: [] }])
       }
     }
@@ -62,23 +61,17 @@ export default function StudyNotesPage() {
     if (user) fetchProgress()
   }, [user])
 
-  const isUnlocked = (topicId: number) => {
-    if (topicId === 1) return true
-    return completedIds.includes(topicId - 1)
-  }
-
+  const isUnlocked = (topicId: number) => (topicId === 1 ? true : completedIds.includes(topicId - 1))
   const allCompleted = topics.length > 0 && topics.every(t => completedIds.includes(t.id))
 
   const handleComplete = async (topicId: number) => {
     if (completedIds.includes(topicId)) return
     const updated = [...completedIds, topicId]
     setCompletedIds(updated)
-
     const { error } = await supabase
       .from('study_progress')
       .update({ completed_ids: updated })
       .eq('user_id', user?.id)
-
     if (error) console.error(error)
   }
 
@@ -119,12 +112,9 @@ export default function StudyNotesPage() {
     return null
   }
 
-  const isLastTopic = () =>
-    viewingTopic?.id === topics[topics.length - 1]?.id
-
+  const isLastTopic = () => viewingTopic?.id === topics[topics.length - 1]?.id
   const nextTopic = getNextUnlockedTopic()
   const previousTopic = getPreviousTopic()
-
   const progressPercentage = Math.round((completedIds.length / topics.length) * 100)
 
   return (
@@ -150,8 +140,9 @@ export default function StudyNotesPage() {
             </div>
             <p className="mb-6 text-sm text-center">{progressPercentage}% completed</p>
 
+            {/* Topics List */}
             <div className="space-y-4 w-full max-w-lg">
-              {topics.map((topic) => {
+              {topics.map(topic => {
                 const isDone = completedIds.includes(topic.id)
                 const unlocked = isUnlocked(topic.id)
 
@@ -159,9 +150,7 @@ export default function StudyNotesPage() {
                   <div
                     key={topic.id}
                     className={`p-4 rounded-lg shadow-lg flex justify-between items-center ${
-                      unlocked
-                        ? 'bg-[#F5F3F5] text-[#1B264F]'
-                        : 'bg-gray-400 text-gray-300'
+                      unlocked ? 'bg-[#F5F3F5] text-[#1B264F]' : 'bg-gray-400 text-gray-300'
                     }`}
                   >
                     <div>
@@ -206,9 +195,10 @@ export default function StudyNotesPage() {
           </>
         )}
 
+        {/* Responsive Modal for PDF */}
         {viewingTopic && signedUrl && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl p-6 max-w-3xl w-full shadow-xl relative flex flex-col items-center">
+            <div className="bg-white rounded-xl p-6 w-full max-w-4xl shadow-xl relative flex flex-col items-center">
               <button
                 className="absolute top-2 right-4 text-gray-600 text-xl font-bold"
                 onClick={() => {
@@ -224,49 +214,46 @@ export default function StudyNotesPage() {
               {iframeLoading && <p className="text-center text-gray-500 mb-2">Loading PDF...</p>}
               <iframe
                 src={signedUrl}
-                width="100%"
-                height="600px"
-                className="border"
+                className="w-full h-[70vh] md:h-[80vh] lg:h-[90vh] border rounded"
                 onLoad={async () => {
                   setIframeLoading(false)
                   await handleComplete(viewingTopic.id)
                 }}
               ></iframe>
 
-              <div className="flex flex-wrap justify-center gap-4">
-                <div className='flex -mt-25 gap-5'>
-                   <button
+              {/* Modal Buttons */}
+              <div className="flex flex-wrap justify-center gap-4 mt-4">
+                <button
                   onClick={() => {
                     setViewingTopic(null)
                     setSignedUrl(null)
                   }}
-                  className="bg-gray-300 text-[#1B264F] px-4 py-2 h-10 rounded hover:bg-gray-400 transition font-bold"
+                  className="bg-gray-300 text-[#1B264F] px-4 py-2 rounded hover:bg-gray-400 transition font-bold"
                 >
                   Back to Notes List
                 </button>
                 {previousTopic && (
                   <button
                     onClick={() => handleViewNotes(previousTopic)}
-                    className="bg-[#1B264F] text-[#F5F3F5] px-4 py-2  h-10 rounded hover:bg-[#1B299F] transition font-bold"
+                    className="bg-[#1B264F] text-[#F5F3F5] px-4 py-2 rounded hover:bg-[#1B299F] transition font-bold"
                   >
                     Previous Topic
                   </button>
                 )}
                 {isLastTopic() ? (
                   <Link href="/exam">
-                    <button className="bg-green-600 text-white px-4 py-2  h-10 rounded hover:bg-green-700 transition font-bold">
+                    <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition font-bold">
                       ✅ Go to Practice Exam
                     </button>
                   </Link>
                 ) : nextTopic && (
                   <button
                     onClick={() => handleViewNotes(nextTopic)}
-                    className="bg-[#1B264F] text-[#F5F3F5] px-4 py-2 h-10 rounded hover:bg-[#1B299F] transition font-bold "
+                    className="bg-[#1B264F] text-[#F5F3F5] px-4 py-2 rounded hover:bg-[#1B299F] transition font-bold"
                   >
                     Next Topic: {nextTopic.title}
                   </button>
                 )}
-                </div>  
               </div>
             </div>
           </div>

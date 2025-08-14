@@ -43,16 +43,16 @@ export default function LoggedInNavbar() {
           isOpen ? "flex" : "hidden"
         } flex-col mt-4 space-y-2 md:mt-0 md:space-y-0 md:flex md:flex-row md:items-center md:space-x-6 font-semibold`}
       >
-                 {/* Profile */}
-        <Link
-          href="/profile"
-          className="flex items-center gap-2 hover:underline"
-        >
-          <div className=" bg-[#1B264F] text-white flex items-center justify-center font-bold">
-            {initials}
-          </div>
-          <span>{name}</span>
-        </Link>
+       {/* Profile / Study Notes */}
+<Link
+  href="/notes"
+  className="flex items-center gap-2 hover:underline"
+>
+  <div className="bg-[#1B264F] text-white flex items-center justify-center font-bold w-8 h-8 rounded-full">
+    {initials}
+  </div>
+  <span>{name}</span>
+</Link>
       {/* Links container */}
         <Link href="/notes" className="hover:underline">
           Study Notes
