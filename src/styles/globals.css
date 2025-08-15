@@ -13,10 +13,10 @@
 /* Dark mode based on device preference */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #ffffff;
     --foreground: #ededed;
     --primary: #ededed;
-    --secondary: #171717;
+    --secondary: #F5F3F5;
     --accent: #ffffff;
     --highlight: #facc15;
   }
