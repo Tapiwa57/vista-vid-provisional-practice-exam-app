@@ -194,7 +194,7 @@ export default function ExplorePage() {
 
       {/* Testimonials */}
       <section className="py-16 px-4 sm:px-6 md:px-20 bg-[var(--primary)] text-[var(--foreground)]">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10">What Our Learners Say</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10 text-white">What Our Learners Say</h1>
         <div ref={testimonialsSliderRef} className="keen-slider">
           {testimonials.map((item, index) => (
             <div className="keen-slider__slide bg-[var(--secondary)] text-[var(--foreground)] p-6 rounded-xl shadow" key={index}>
